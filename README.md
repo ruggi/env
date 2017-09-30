@@ -2,7 +2,7 @@
 
 [![godoc](https://godoc.org/github.com/ruggi/env?status.svg)](https://godoc.org/github.com/ruggi/env)
 
-env tries to override a struct's field values with environment variables' values.
+env tries to set a struct's field values with environment variables' values.
 
 It comes in handy when dealing with configuration types, inits, tests, benchmarks, etc.
 
