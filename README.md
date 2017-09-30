@@ -33,6 +33,18 @@ You can override some (or all) values of `Server` with environment variables nam
 $ SERVER_PORT=4567 go run example.go
 ```
 
+When calling `env.ParseInto` (or the other parsing methods), the interface argument must be a pointer. If it's not, the method returns immediately.
+
+Supported types:
+* string
+* int, int8, int16, int32, int64
+* float32, float64
+* bool
+
+If the conversion of an environment variable fails, it just skips the field without changing the original value.
+
+You can support more types with your own conversion function using the `env.ParseTagIntoFunc` method.
+
 ### Methods
 
 ```go
