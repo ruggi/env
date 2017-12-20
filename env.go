@@ -33,21 +33,30 @@ func ParseTagIntoFunc(tag string, c interface{}, convFn ConvFunc) {
 	typ := reflect.TypeOf(c).Elem()
 	for i := 0; i < typ.NumField(); i++ {
 		fld := typ.Field(i)
-		lookup, ok := fld.Tag.Lookup(tag)
-		if !ok {
+		if fld.Type.Kind() == reflect.Struct {
+			e := reflect.ValueOf(c).Elem().Field(i).Addr().Interface()
+			ParseTagIntoFunc(tag, e, convFn)
 			continue
 		}
-		env := os.Getenv(lookup)
-		if env == "" {
-			continue
-		}
-		val := reflect.ValueOf(c).Elem().Field(i)
-		dest, ok := convFn(env, val.Type().Kind())
-		if !ok {
-			continue
-		}
-		val.Set(reflect.ValueOf(dest))
+		parseField(fld, i, tag, c, convFn)
 	}
+}
+
+func parseField(fld reflect.StructField, index int, tag string, c interface{}, convFn ConvFunc) {
+	lookup, ok := fld.Tag.Lookup(tag)
+	if !ok {
+		return
+	}
+	env := os.Getenv(lookup)
+	if env == "" {
+		return
+	}
+	val := reflect.ValueOf(c).Elem().Field(index)
+	dest, ok := convFn(env, val.Type().Kind())
+	if !ok {
+		return
+	}
+	val.Set(reflect.ValueOf(dest))
 }
 
 // ConvFunc is a function used for converting environment variables into fields.

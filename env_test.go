@@ -13,18 +13,23 @@ type v struct {
 	val string
 }
 
+type Nested struct {
+	Val string `env:"NESTED_VAL"`
+}
+
 func TestParse(t *testing.T) {
 	type T struct {
-		A string  `env:"A"`
-		B int     `env:"B"`
-		C bool    `env:"C"`
-		D byte    `env:"D"` // unsupported
-		E int8    `env:"E"`
-		F int16   `env:"F"`
-		G int32   `env:"G"`
-		H int64   `env:"H"`
-		I float32 `env:"I"`
-		J float64 `env:"J"`
+		A      string  `env:"A"`
+		B      int     `env:"B"`
+		C      bool    `env:"C"`
+		D      byte    `env:"D"` // unsupported
+		E      int8    `env:"E"`
+		F      int16   `env:"F"`
+		G      int32   `env:"G"`
+		H      int64   `env:"H"`
+		I      float32 `env:"I"`
+		J      float64 `env:"J"`
+		Nested Nested
 	}
 	tests := []struct {
 		vars     []v
@@ -77,6 +82,13 @@ func TestParse(t *testing.T) {
 			},
 			c:        T{},
 			expected: T{E: 2, F: 3, G: 4, H: 5, I: 1.123, J: 1.123456},
+		},
+		{
+			vars: []v{
+				v{key: "NESTED_VAL", val: "test"},
+			},
+			c:        T{Nested: Nested{Val: "replaceme"}},
+			expected: T{Nested: Nested{Val: "test"}},
 		},
 	}
 	for _, tt := range tests {
