@@ -56,7 +56,7 @@ type ConvFunc func(envVar string, kind reflect.Kind) (interface{}, bool)
 type singleConvFunc func(envVar string) (interface{}, error)
 
 var convs = map[reflect.Kind]singleConvFunc{
-	reflect.String:  func(v string) (interface{}, error) { return v, nil },
+	reflect.String:  stringConv,
 	reflect.Int8:    int8Conv,
 	reflect.Int16:   int16Conv,
 	reflect.Int:     intConv,
